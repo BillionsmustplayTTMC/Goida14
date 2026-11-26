@@ -14,6 +14,9 @@ namespace Content.Shared._MC.Weapon.Laser.Systems;
 
 public sealed partial class MCWeaponLaserSystem
 {
+    /// <summary>
+    /// Fires the laser in its current mode if the installed cell can supply the required charge.
+    /// </summary>
     public void Shoot(Entity<MCWeaponLaserComponent> entity, Entity<GunComponent> gunEntity, EntityUid? user,
         EntityCoordinates fromCoordinates, EntityCoordinates toCoordinates, ICommonSession? predictingSession)
     {
@@ -113,10 +116,6 @@ public sealed partial class MCWeaponLaserSystem
         _physics.SetBodyStatus(uid, physicsComponent, BodyStatus.InAir);
 
         projectileComponent = EnsureComp<ProjectileComponent>(uid);
-        projectileComponent.Weapon = gunUid;
-
-        var shooter = user ?? gunUid;
-        if (shooter is not null)
-            _projectile.SetShooter(uid, projectileComponent, shooter.Value);
+        _projectile.InitializeShot((uid, projectileComponent), gunUid, user);
     }
 }
